@@ -1,5 +1,5 @@
 import sqlite3
-from GTA import TypeTravail
+from TypeTravail import *
 
 def create_connection():
     return sqlite3.connect("GTADB")
@@ -7,6 +7,11 @@ def create_connection():
 def create_new_employee(con: sqlite3.Connection, RFIDCardID: str, Personne: str, TypeTravail: TypeTravail):
     cursor = con.cursor()
     cursor.execute(f"""Insert into Personnel (RFIDCardID, Personne, TypeTravail) values ({RFIDCardID}, "{Personne}", {TypeTravail.value}) """)
+    con.commit()
+
+def create_new_employee(con: sqlite3.Connection, RFIDCardID: str, Personne: str, TypeTravail: int):
+    cursor = con.cursor()
+    cursor.execute(f"""Insert into Personnel (RFIDCardID, Personne, TypeTravail) values ({RFIDCardID}, "{Personne}", {TypeTravail}) """)
     con.commit()
 
 def update_employee_card(con: sqlite3.Connection, RFIDCardID: str, Personne: str, TypeTravail: TypeTravail):
