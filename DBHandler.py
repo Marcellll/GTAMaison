@@ -4,7 +4,7 @@ from Enums.TypeBagdage import *
 from datetime import datetime
 
 def create_connection():
-    return sqlite3.connect("Database\\GTADB")
+    return sqlite3.connect("Database\\GTADB.sqlite3")
 
 def create_new_employee(con: sqlite3.Connection, RFIDCardID: str, Personne: str, TypeTravail: TypeTravail):
     cursor = con.cursor()
@@ -72,6 +72,25 @@ def is_RFID_used(con: sqlite3.Connection, RFIDCard: str) -> bool:
         else:
             return False
 
+def is_Personne_logged_in(con:sqlite3.Connection, RFIDCard: str) -> bool:
+    cursor = con.cursor()
+    result = cursor.execute(f""" select count(*) from Badgage where RFIDCard = "{RFIDCard}" and Date = "{datetime.today().strftime("%d.%m.%Y")}" and TypeEntreeSortie = {TypeBadgage.ENTREE.value}""")
+    for results in result:
+        if results[0] == 1:
+            return True
+        else:
+            return False
+
+def is_Personne_logged_off(con:sqlite3.Connection, RFIDCard: str) -> bool:
+    cursor = con.cursor()
+    result = cursor.execute
+    result = cursor.execute(f""" select count(*) from Badgage where RFIDCard = "{RFIDCard}" and Date = "{datetime.today().strftime("%d.%m.%Y")}" and TypeEntreeSortie = {TypeBadgage.SORTIE.value}""")
+    for results in result:
+        if results[0] == 1:
+            return True
+        else:
+            return False
+
 def get_Personne(con: sqlite3.Connection, RFIDCard: str) -> str:
     cursor = con.cursor()
     result = cursor.execute(f"""select Personne from Personnel where RFIDCardID = "{RFIDCard}" """)
@@ -81,7 +100,7 @@ def get_Personne(con: sqlite3.Connection, RFIDCard: str) -> str:
 if __name__ == "__main__":
     connection = create_connection()
     #create_new_badge_entry(connection, "360976183797", TypeBadgage.SORTIE)
-    result = get_Personne(connection, 360976183797)
+    result = is_Personne_logged_in(connection, "360976183797")
     print(result)
     #for results in result:
         #print(result)
