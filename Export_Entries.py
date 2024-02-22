@@ -1,8 +1,9 @@
 import pandas
 import sqlite3
+import DBHandler
 
 def main():
-    con = sqlite3.connect("Database\\GTADB.sqlite3")
+    con = DBHandler.create_connection()
     db_df = pandas.read_sql_query("""select Badgage.RFIDCard,
 	   Badgage.Semaine,
 	   Badgage.Date,
@@ -13,12 +14,10 @@ def main():
 from Badgage
 left join TypeEntreeSortie on Badgage.TypeEntreeSortie = TypeEntreeSortie.EnumTypeEntreeSortie
 left join Personnel on Badgage.RFIDCard = Personnel.RFIDCardID
-left join TypeTravail on Personnel.TypeTravail = TypeTravail.EnumTypeTravail""", con)
-    db_df.to_csv(f".\export\export.csv", index=False)
-
-#def send_per_mail():
+left join TypeTravail on Personnel.TypeTravail = TypeTravail.EnumTypeTravail
+where Badgage.Semaine = strftime('%W')""", con)
+    db_df.to_csv(f"export/export.csv", index=False)
     
 
 if __name__ == "__main__":
     main()
-    #send_per_mail()

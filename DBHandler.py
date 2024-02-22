@@ -4,7 +4,7 @@ from Enums.TypeBagdage import *
 from datetime import datetime
 
 def create_connection():
-    return sqlite3.connect("Database\\GTADB.sqlite3")
+    return sqlite3.connect("Database/GTADB.db")
 
 def create_new_employee(con: sqlite3.Connection, RFIDCardID: str, Personne: str, TypeTravail: TypeTravail):
     cursor = con.cursor()
