@@ -97,11 +97,25 @@ def get_Personne(con: sqlite3.Connection, RFIDCard: str) -> str:
     for results in result:
         return results[0]
 
+def get_Personne_TypeTravail(con: sqlite3.Connection, RFIDCard: str) -> TypeTravail:
+    cursor = con.cursor()
+    result = cursor.execute(f"""select EnumTypeTravail from Personnel
+                                left join TypeTravail on Personnel.TypeTravail = TypeTravail.EnumTypeTravail
+                                where RFIDCardID = "{RFIDCard}" """)
+    for results in result:
+        if results[0] == 1:
+            return TypeTravail.HORRAIRE
+        if results[0] == 2:
+            return TypeTravail.JOURNEE
+        else:
+            return None
+
 if __name__ == "__main__":
     connection = create_connection()
     #create_new_badge_entry(connection, "360976183797", TypeBadgage.SORTIE)
-    result = is_Personne_logged_in(connection, "360976183797")
+    result = get_Personne_TypeTravail(connection, "360976183797")
     print(result)
+    print(result==TypeTravail.JOURNEE)
     #for results in result:
         #print(result)
     connection.close()
