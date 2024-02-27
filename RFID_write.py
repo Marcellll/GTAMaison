@@ -33,3 +33,6 @@ def write_to_card(personne: str, typeTravail: TypeTravail):
     finally:
         GPIO.cleanup
         connection.close()
+
+if __name__ == "__main__":
+    write_to_card("Solène", TypeTravail.JOURNEE)

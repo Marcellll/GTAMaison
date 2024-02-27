@@ -10,7 +10,7 @@ root = Tk()
 root.title("Badgeuse")
 root.attributes("-fullscreen", True)
 infoText = StringVar()
-infoLabel = Label(root, textvariable=infoText, font=("Verdana", 25)).pack()
+infoLabel = Label(root, textvariable=infoText, font=("Verdana", 25), wraplength = root.winfo_screenwidth()).pack()
 
 def get_RFID_reading():
     infoText.set("Lecture du badge en attente...")
