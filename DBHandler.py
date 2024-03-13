@@ -110,12 +110,20 @@ def get_Personne_TypeTravail(con: sqlite3.Connection, RFIDCard: str) -> TypeTrav
         else:
             return None
 
+def get_badging_time(con: sqlite3.Connection, RFIDCard: str, EntreeSortie: TypeBadgage, date: str) -> str:
+    cursor = con.cursor()
+    result = cursor.execute(f""" select Horraire from Badgage where RFIDCard = {RFIDCard} and TypeEntreeSortie = {EntreeSortie.value} and Date = "{date}" """)
+    for results in result:
+        return results[0]
+
+
 if __name__ == "__main__":
     connection = create_connection()
     #create_new_badge_entry(connection, "360976183797", TypeBadgage.SORTIE)
-    result = get_Personne_TypeTravail(connection, "360976183797")
+    result = get_badging_time(connection, "126538482727", TypeBadgage.ENTREE, datetime.today().strftime("%d.%m.%Y"))
     print(result)
-    print(result==TypeTravail.JOURNEE)
+    result = get_badging_time(connection, "126538482727", TypeBadgage.SORTIE, datetime.today().strftime("%d.%m.%Y"))
+    print(result)
     #for results in result:
         #print(result)
     connection.close()
