@@ -26,17 +26,21 @@ def clickSortie():
     heureActuel = datetime.today().strftime("%H:%M:%S")
     RFIDCardActuel = get_RFID_reading()
     con = create_connection()
-    if is_RFID_used(con, RFIDCardActuel): 
-        if not(get_Personne_TypeTravail(con, RFIDCardActuel) == TypeTravail.JOURNEE): 
-            if not(is_Personne_logged_off(con, RFIDCardActuel)):
-                create_new_badge_entry(con, RFIDCardActuel, semaineActuel, dateActuel, heureActuel, TypeBadgage.SORTIE.value)
-                infoText.set(f"{get_Personne(con, RFIDCardActuel)} a badgé sa sortie le {dateActuel} à {heureActuel}. Bonne journée !")
+    if is_RFID_used(con, RFIDCardActuel):
+        if is_Personne_logged_in(con, RFIDCardActuel): 
+            if not(get_Personne_TypeTravail(con, RFIDCardActuel) == TypeTravail.JOURNEE): 
+                if not(is_Personne_logged_off(con, RFIDCardActuel)):
+                    create_new_badge_entry(con, RFIDCardActuel, semaineActuel, dateActuel, heureActuel, TypeBadgage.SORTIE.value)
+                    infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: {get_Personne(con, RFIDCardActuel)} a badgé sa sortie le {dateActuel} à {heureActuel}. Bonne journée !")
+                else:
+                    time_out = get_badging_time(con, RFIDCardActuel, TypeBadgage.SORTIE.value, dateActuel)
+                    infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: Vous avez déjà badgé votre sortie à {time_out}!")
             else:
-                infoText.set(f"Vous avez déjà badgé votre sortie !")
+                infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: Vous n'avez pas besoin de badger votre sortie")
         else:
-            infoText.set(f"Vous n'avez pas besoin de badger votre sortie")
+            infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: Badgez d'abord votre entrée")
     else:
-        infoText.set(f"Votre badge n'est pas enregistré, veuillez contacter Solène Dalmar")
+        infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: Votre badge n'est pas enregistré, veuillez contacter Solène Dalmar")
 
 def clickEntree():
     semaineActuel = datetime.today().strftime("%W")
@@ -47,11 +51,12 @@ def clickEntree():
     if is_RFID_used(con, RFIDCardActuel):  
         if not(is_Personne_logged_in(con, RFIDCardActuel)):
             create_new_badge_entry(con, RFIDCardActuel, semaineActuel, dateActuel, heureActuel, TypeBadgage.ENTREE.value)
-            infoText.set(f"{get_Personne(con, RFIDCardActuel)} a badgé son entrée le {dateActuel} à {heureActuel}. Merci !")
+            infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: {get_Personne(con, RFIDCardActuel)} a badgé son entrée le {dateActuel} à {heureActuel}. Merci !")
         else:
-            infoText.set(f"Vous avez déjà badgé votre entrée !")
+            time_in = get_badging_time(con, RFIDCardActuel, TypeBadgage.ENTREE.value, dateActuel)
+            infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: Vous avez déjà badgé votre entrée à {time_in}!")
     else:
-        infoText.set(f"Votre badge n'est pas enregistré, veuillez contacter Solène Dalmar")
+        infoText.set(f"[{datetime.today().strftime('%H:%M:%S')}]: Votre badge n'est pas enregistré, veuillez contacter Solène Dalmar")
 
 def adminView():
     adminPage = Toplevel(root)
@@ -67,11 +72,11 @@ def adminView():
     
 entreeButton = Button(root, text="Entrée", padx = (root.winfo_screenwidth() * 0.15), pady = (root.winfo_screenheight() * 0.2),bg="green", font = ("Verdana", 30), fg = "#FFFFFF", command=clickEntree)
 sortieButton = Button(root, text="Sortie", padx = (root.winfo_screenwidth() * 0.15), pady = (root.winfo_screenheight() * 0.2), bg="red", font = ("Verdana", 30), fg = "#FFFFFF", command=clickSortie)
-exitButton = Button(root, text="Quitter", command=clickExit)
-adminButton = Button(root, text="Admin", command=adminView)
+#exitButton = Button(root, text="Quitter", command=clickExit)
+#adminButton = Button(root, text="Admin", command=adminView)
 
-exitButton.pack(side = 'bottom')
-adminButton.pack(side="bottom")
+#exitButton.pack(side = 'bottom')
+#adminButton.pack(side="bottom")
 entreeButton.pack(side = "left")
 sortieButton.pack(side = "right")
 

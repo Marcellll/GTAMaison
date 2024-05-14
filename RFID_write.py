@@ -29,10 +29,10 @@ def write_to_card(personne: str, typeTravail: TypeTravail):
                 sys.exit()
         reader.write(personne)
         create_new_employee(connection, id, personne, typeTravail)
-        print(f"{personne} was written to the RFID Card")
+        print(f"{personne} was written to the RFID Card and Database")
     finally:
         GPIO.cleanup
         connection.close()
 
 if __name__ == "__main__":
-    write_to_card("Solène", TypeTravail.JOURNEE)
+    write_to_card("Karim", TypeTravail.HORRAIRE.value)

@@ -14,8 +14,8 @@ def main():
 		left join TypeEntreeSortie on Badgage.TypeEntreeSortie = TypeEntreeSortie.EnumTypeEntreeSortie
 		left join Personnel on Badgage.RFIDCard = Personnel.RFIDCardID
 		left join TypeTravail on Personnel.TypeTravail = TypeTravail.EnumTypeTravail
-		where Badgage.Semaine = strftime('%W')""", con)
-    db_df.to_csv(f"export/export-S{datetime.today().strftime("%W")}.csv", index=False)
+		where Badgage.Semaine = strftime('%W')-1""", con)
+    db_df.to_csv(f"""export/export-S{int(datetime.today().strftime("%W"))-1}.csv""", index=False)
     con.close()
     
 if __name__ == "__main__":
