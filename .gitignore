@@ -1,3 +1,4 @@
 Database/*
 export/*
 log/*
+__pycache__/*
