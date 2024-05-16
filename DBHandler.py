@@ -116,9 +116,34 @@ def get_badging_time(con:sqlite3.Connection, RFIDCard: str, EntreeSortie: TypeBa
     for results in result:
         return results[0]
 
+def get_10days_badging(con:sqlite3.Connection, RFIDCard: str) -> sqlite3.Cursor:
+    cursor = con.cursor()
+    return cursor.execute(f"""select Entree.Date,
+                                    Entree.Horraire as "Horraire Entrée",
+                                    Sortie.HorraireSortie as "Horraire Sortie",
+                                    Personnel.Personne
+                            from Badgage as Entree
+                            left join Personnel on Entree.RFIDCard = Personnel.RFIDCardID
+                            left join TypeTravail on Personnel.TypeTravail = TypeTravail.EnumTypeTravail
+                            left join (select Badgage.Date as "DateSortie",
+                                        Badgage.Horraire as "HorraireSortie",
+                                        Personnel.Personne
+                                        from Badgage
+                                        left join Personnel on Badgage.RFIDCard = Personnel.RFIDCardID
+                                        left join TypeTravail on Personnel.TypeTravail = TypeTravail.EnumTypeTravail
+                                            where 
+                                                strftime('%s', substr(Date, 7) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2)) > strftime('%s', date('now', '-20 days'))
+                                                and RFIDCard = "{RFIDCard}"
+                                                and TypeEntreeSortie = 2) Sortie on Sortie.DateSortie = Entree.Date
+                            where 
+                                strftime('%s', substr(Date, 7) || '-' || substr(Date, 4, 2) || '-' || substr(Date, 1, 2)) > strftime('%s', date('now', '-20 days'))
+                                and RFIDCard = "{RFIDCard}"
+                                and TypeEntreeSortie = 1""")
+
 if __name__ == "__main__":
     connection = create_connection()
     #create_new_employee(connection, "360976183797", "Marcel", TypeTravail.JOURNEE)
-    result = get_Personne(connection, "360976183797")
-    print(result)
+    result = get_10days_badging(connection, "384186254439").fetchall()
+    for line in result:
+        print(line)
     connection.close()

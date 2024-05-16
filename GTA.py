@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 from DBHandler import *
 import sys
 from Enums.TypeTravail import *
@@ -69,9 +70,28 @@ def adminView():
     #TODO: Mettre la lecture du badge ici
     #ajoutNouvelEmployeButton = Button(adminPage, text = "Ajouter une nouvel employé",padx=200, pady = 50, 
                                        #command=lambda: create_new_employee(create_connection(),,, radioButtonVariable.get())).pack()
-    
+
+def badgageView():
+    con = create_connection()
+    RFIDCardActuel = get_RFID_reading()
+    badgagePage = Toplevel(root)
+    badgagePage.title("Bagage dernier 10 jours")
+    table = ttk.Treeview(badgagePage, columns= ('Date', 'Horraire Entrée', 'Horraire Sortie', 'Personne'), show= 'headings')
+    table.heading('Date', text = 'Date')
+    table.heading('Horraire Entrée', text = 'Horraire Entrée')
+    table.heading('Horraire Sortie', text = 'Horraire Sortie')
+    table.heading('Personne', text = 'Personne')
+    table.pack(fill = 'both', expand = True)
+    result = get_10days_badging(con, RFIDCardActuel).fetchall()
+    for line in result:
+        table.insert(parent = '', index=0, values = line)
+
+
+
 entreeButton = Button(root, text="Entrée", padx = (root.winfo_screenwidth() * 0.15), pady = (root.winfo_screenheight() * 0.2),bg="green", font = ("Verdana", 30), fg = "#FFFFFF", command=clickEntree)
 sortieButton = Button(root, text="Sortie", padx = (root.winfo_screenwidth() * 0.15), pady = (root.winfo_screenheight() * 0.2), bg="red", font = ("Verdana", 30), fg = "#FFFFFF", command=clickSortie)
+badgageButton = Button(root, text="Badgage", padx = (root.winfo_screenwidth() * 0.05), pady = (root.winfo_screenheight() * 0.05), bg="orange", font = ("Verdana", 30), fg = "#FFFFFF", command=badgageView)
+
 #exitButton = Button(root, text="Quitter", command=clickExit)
 #adminButton = Button(root, text="Admin", command=adminView)
 
@@ -79,6 +99,7 @@ sortieButton = Button(root, text="Sortie", padx = (root.winfo_screenwidth() * 0.
 #adminButton.pack(side="bottom")
 entreeButton.pack(side = "left")
 sortieButton.pack(side = "right")
+badgageButton.pack(side = "bottom")
 
 root.mainloop()
 
